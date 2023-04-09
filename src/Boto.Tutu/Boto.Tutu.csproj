@@ -1,0 +1,15 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>$(AppTargetFramework)</TargetFramework>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Tutu" />
+  </ItemGroup>
+ 
+  <ItemGroup>
+    <ProjectReference Include="..\Boto\Boto.csproj" />
+  </ItemGroup>
+
+</Project>
