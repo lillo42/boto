@@ -49,11 +49,11 @@ public class TutuBackend : IBackend
                 modifier = diff.Cell.Modifier;
             }
 
-            if (diff.Cell.ForegroundColor != fg)
+            if (diff.Cell.Foreground != fg)
             {
-                var color = diff.Cell.ForegroundColor.MapToTutuColor();
+                var color = diff.Cell.Foreground.MapToTutuColor();
                 _queue.Enqueue(SetForegroundColor(color));
-                fg = diff.Cell.ForegroundColor;
+                fg = diff.Cell.Foreground;
             }
 
             if (diff.Cell.BackgroundColor != bg)

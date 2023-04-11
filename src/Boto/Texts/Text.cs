@@ -9,6 +9,10 @@ namespace Boto.Texts;
 /// <param name="Lines"></param>
 public record Text(List<Spans> Lines)
 {
+    /// <summary>
+    /// Initialize Text from a content. 
+    /// </summary>
+    /// <param name="content">The content.</param>
     public Text(string content)
         : this(content.Split('\n')
             .Select(x => new Spans(x))
@@ -16,17 +20,31 @@ public record Text(List<Spans> Lines)
     {
     }
 
-
+    /// <summary>
+    /// Initialize Text from a content and style.
+    /// </summary>
+    /// <param name="content">The content.</param>
+    /// <param name="style">The <see cref="Style"/>.</param>
     public Text(string content, Style style)
         : this(content)
     {
         PatchStyle(style);
     }
 
+    /// <summary>
+    /// The max width of the text.
+    /// </summary>
     public int Width => Lines.Max(line => line.Width);
 
+    /// <summary>
+    /// The height of the text (number of lines).
+    /// </summary>
     public int Height => Lines.Count;
 
+    /// <summary>
+    /// Apply a style to all spans.
+    /// </summary>
+    /// <param name="style">The <see cref="Style"/>.</param>
     public void PatchStyle(Style style)
     {
         foreach (var line in Lines)
@@ -38,4 +56,12 @@ public record Text(List<Spans> Lines)
             }
         }
     }
+
+    /// <summary>
+    /// Convert a string to a <see cref="Text"/>.
+    /// </summary>
+    /// <param name="content">The content.</param>
+    /// <returns>A new instance of <see cref="Text"/>.</returns>
+    public static implicit operator Text(string content)
+        => new(content);
 }

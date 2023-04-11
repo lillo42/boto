@@ -52,7 +52,7 @@ public class Gauge : IWidget
                 buffer[x, y] = buffer[x, y] with
                 {
                     Symbol = " ",
-                    ForegroundColor = GaugeStyle.Background ?? Color.Reset,
+                    Foreground = GaugeStyle.Background ?? Color.Reset,
                     BackgroundColor = GaugeStyle.Foreground ?? Color.Reset
                 };
             }

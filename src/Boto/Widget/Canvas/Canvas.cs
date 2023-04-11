@@ -49,7 +49,7 @@ public class Canvas : IWidget
                 if (ch != ' ' && ch != '\x2800')
                 {
                     var (x, y) = ((i % width) + canvasArea.Left, (i / width) + canvasArea.Top);
-                    buffer[x, y] = buffer[x, y] with { ForegroundColor = color, Symbol = ch.ToString() };
+                    buffer[x, y] = buffer[x, y] with { Foreground = color, Symbol = ch.ToString() };
                 }
             }
         }

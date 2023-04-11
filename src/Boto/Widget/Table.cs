@@ -6,19 +6,36 @@ using Buffer = Boto.Buffers.Buffer;
 
 namespace Boto.Widget;
 
+/// <summary>
+/// The buffer cells.
+/// </summary>
+/// <param name="Content">The <see cref="Text"/>.</param>
+/// <param name="Style">The <see cref="Styles.Style"/>.</param>
 public record Cell(Text Content, Style Style)
 {
+    /// <summary>
+    /// Initializes a new instance of the <see cref="Cell"/> class.
+    /// </summary>
+    /// <param name="content">The <see cref="Text"/>.</param>
     public Cell(Text content)
         : this(content, new())
     {
     }
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="Cell"/> class.
+    /// </summary>
+    /// <param name="spans">The <see cref="List{T}"/> of <see cref="Spans"/>.</param>
     public Cell(List<Spans> spans)
         : this(new Text(spans))
     {
         
     }
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="Cell"/> class.
+    /// </summary>
+    /// <param name="content">The <see cref="List{T}"/> of <see cref="Spans"/>.</param>
     public Cell(string content)
         : this(new List<Spans> { content })
     {
