@@ -6,34 +6,58 @@ using Buffer = Boto.Buffers.Buffer;
 
 namespace Boto.Widget;
 
+/// <summary>
+/// Base widget to be used with all upper level ones. It may be used to display a box border around
+/// the widget and/or add a title.
+/// </summary>
 public class Block : IWidget
 {
+    /// <summary>
+    /// Optional title place on the upper left of the block
+    /// </summary>
     public Spans? Title { get; set; }
+
+    /// <summary>
+    /// Title alignment. The default is top left of the block, but one can choose to place
+    /// title in the top middle, or top right of the block
+    /// </summary>
     public Alignment TitleAlignment { get; set; } = Alignment.Left;
+
+    /// <summary>
+    /// Visible borders
+    /// </summary>
     public Borders Borders { get; set; } = Borders.None;
+    
+    /// <summary>
+    /// Border style
+    /// </summary>
     public Style BorderStyle { get; set; } = new();
+    
+    /// <summary>
+    /// Type of the border. The default is plain lines but one can choose to have rounded corners
+    /// or doubled lines instead.
+    /// </summary>
     public BorderType BorderType { get; set; } = BorderType.Plain;
+    
+    /// Widget style
     public Style Style { get; set; } = new();
 
+    /// <summary>
+    /// Compute the inner area of a block based on its border visibility rules.
+    /// </summary>
+    /// <param name="area">The <see cref="Rect"/>.</param>
+    /// <returns>The inner area.</returns>
     public Rect Inner(Rect area)
     {
         var inner = area;
         if (Borders.HasFlag(Borders.Left))
         {
-            inner = inner with
-            {
-                X = Math.Min(inner.X + 1, inner.Right), 
-                Width = inner.Width.SaturatingSub(1)
-            };
+            inner = inner with { X = Math.Min(inner.X + 1, inner.Right), Width = inner.Width.SaturatingSub(1) };
         }
 
         if (Borders.HasFlag(Borders.Top) || Title != null)
         {
-            inner = inner with
-            {
-                Y = Math.Min(inner.Y + 1, inner.Bottom), 
-                Height = inner.Height.SaturatingSub(1)
-            };
+            inner = inner with { Y = Math.Min(inner.Y + 1, inner.Bottom), Height = inner.Height.SaturatingSub(1) };
         }
 
         if (Borders.HasFlag(Borders.Right))
@@ -49,6 +73,7 @@ public class Block : IWidget
         return inner;
     }
 
+    /// <inheritdoc cref="IWidget.Render"/>
     public void Render(Rect area, Buffer buffer)
     {
         if (area.Area == 0)
@@ -118,7 +143,7 @@ public class Block : IWidget
                 Symbol = symbols.BottomLeft
             };
         }
-        
+
         if (Borders.HasFlag(Borders.Left) || Borders.HasFlag(Borders.Top))
         {
             buffer[area.Left, area.Top] = buffer[area.Left, area.Top].With(BorderStyle) with
@@ -126,7 +151,7 @@ public class Block : IWidget
                 Symbol = symbols.TopLeft
             };
         }
-        
+
         // Title
         if (Title != null)
         {

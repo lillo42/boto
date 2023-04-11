@@ -4,6 +4,9 @@ using Boto.Texts;
 
 namespace Boto.Widget;
 
+/// <summary>
+/// The <see cref="Block"/> extensions.
+/// </summary>
 public static class BlockExtensions
 {
     #region Title

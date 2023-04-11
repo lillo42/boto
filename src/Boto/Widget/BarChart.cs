@@ -6,20 +6,63 @@ using Buffer = Boto.Buffers.Buffer;
 
 namespace Boto.Widget;
 
+/// <summary>
+/// Display multiple bar in a single widgets.
+/// </summary>
 public class BarChart : IWidget
 {
+    /// <summary>
+    /// Block to wrap the widget in.
+    /// </summary>
     public Block? Block { get; set; }
+    
+    /// <summary>
+    /// The width of each bar.
+    /// </summary>
     public int BarWidth { get; set; } = 1;
+    
+    /// <summary>
+    /// The gap between each bar.
+    /// </summary>
     public int BarGap { get; set; } = 1;
+    
+    /// <summary>
+    /// Value necessary for a bar to reach the maximum height (if no value is specified,
+    /// the maximum value in the data is taken as reference)
+    /// </summary>
     public long? Max { get; set; }
+    
+    /// <summary>
+    /// Set of symbols to used to display the data.
+    /// </summary>
     public Set BarSet { get; set; } = Bar.NineLevels;
+    
+    /// <summary>
+    /// The style of the bars.
+    /// </summary>
     public Style BarStyle { get; set; } = new();
+    
+    /// <summary>
+    /// The Style of the labels printed under each bar.
+    /// </summary>
     public Style LabelStyle { get; set; } = new();
+    
+    /// <summary>
+    /// The Style of the value printed above each bar.
+    /// </summary>
     public Style ValueStyle { get; set; } = new();
+    
+    /// <summary>
+    /// The style of the widget.
+    /// </summary>
     public Style Style { get; set; } = new();
 
+    /// <summary>
+    /// The data to plot on the chart.
+    /// </summary>
     public List<IBarCharItem> Items { get; } = new();
 
+    /// <inheritdoc cref="IWidget.Render"/>
     public void Render(Rect area, Buffer buffer)
     {
         buffer.SetStyle(area, Style);
