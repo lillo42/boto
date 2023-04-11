@@ -1,0 +1,49 @@
+name: Build Main
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  build-ubuntu:
+    name: build & tests on Ubuntu
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+        with:
+          fetch-depth: 0
+
+      - name: Build & Test
+        run: |
+          chmod +x ./build.sh
+          ./build.sh Tests
+  
+  package:
+    name: Create nuget package
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+        with:
+          fetch-depth: 0
+
+      - name: Packages
+        run: |
+          chmod +x ./build.sh
+          ./build.sh Pack
+
+      - uses: actions/upload-artifact@v3
+        with:
+          name: packages
+          path: artifacts/packages
+
+      - uses: actions/upload-artifact@v3
+        with:
+          name: test-results
+          path: artifacts/test-results
+
+      - uses: actions/upload-artifact@v3
+        with:
+          name: coverage-report
+          path: artifacts/coverage-report
