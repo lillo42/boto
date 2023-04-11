@@ -13,6 +13,8 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution 
 		Directory.Build.props = Directory.Build.props
 		Directory.Packages.props = Directory.Packages.props
 		global.json = global.json
+		.gitattributes = .gitattributes
+		.gitignore = .gitignore
 	EndProjectSection
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "tests", "tests", "{9FB98FA1-3747-453B-9DFD-4C8CE1E699C5}"
@@ -47,6 +49,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ChartSample", "samples\Char
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CanvasSample", "samples\CanvasSample\CanvasSample.csproj", "{C09C218A-1FF3-4299-B839-5C30E11AC715}"
 EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "_build", "build\_build.csproj", "{A3A4E053-7022-4902-A549-7D0074EC18F5}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -56,6 +60,8 @@ Global
 		HideSolutionNode = FALSE
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{A3A4E053-7022-4902-A549-7D0074EC18F5}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{A3A4E053-7022-4902-A549-7D0074EC18F5}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{0C7E9E7E-79CF-4F09-A387-3AF34EE65740}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{0C7E9E7E-79CF-4F09-A387-3AF34EE65740}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{0C7E9E7E-79CF-4F09-A387-3AF34EE65740}.Release|Any CPU.ActiveCfg = Release|Any CPU
