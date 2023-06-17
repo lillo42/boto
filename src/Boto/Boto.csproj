@@ -2,10 +2,24 @@
 
   <PropertyGroup>
     <TargetFramework>$(AppTargetFramework)</TargetFramework>
+    <GenerateDocumentationFile>true</GenerateDocumentationFile>
+    <IsPackable>true</IsPackable>
+    <PackageReadmeFile>README.md</PackageReadmeFile>
+    <PackageTags>terminal dashboard tui</PackageTags>
+    <Title>Boto</Title>
+    <Description>Build terminal user interfaces and dashboards using C#</Description>
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="Cassowary.CSharp" />
+    <None Include="../../README.md" Pack="true" PackagePath="/"/>
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Cassowary.CSharp"/>
+    <PackageReference Include="Microsoft.SourceLink.GitHub">
+      <PrivateAssets>all</PrivateAssets>
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+    </PackageReference>
   </ItemGroup>
 
 </Project>

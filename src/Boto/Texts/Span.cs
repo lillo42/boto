@@ -9,6 +9,10 @@ namespace Boto.Texts;
 /// </summary>
 public record Span(string Content, Style Style)
 {
+    /// <summary>
+    /// Initializes a new instance of the <see cref="Span"/> class.
+    /// </summary>
+    /// <param name="content">The content.</param>
     public Span(string content)
         : this(content, new Style())
     {
@@ -19,6 +23,11 @@ public record Span(string Content, Style Style)
     /// </summary>
     public int Width => Content.Width();
 
+    /// <summary>
+    /// Create a collection of <see cref="StyledGrapheme"/>s from this span.
+    /// </summary>
+    /// <param name="style">The <see cref="Styles.Style"/>.</param>
+    /// <returns>The <see cref="IEnumerable{T}"/> of <see cref="StyledGrapheme"/>.</returns>
     public IEnumerable<StyledGrapheme> StyledGraphemes(Style style)
     {
         var enumerator = StringInfo.GetTextElementEnumerator(Content);
@@ -32,6 +41,11 @@ public record Span(string Content, Style Style)
         }
     }
 
-    public static implicit operator Span(string text)
-        => new(text);
+    /// <summary>
+    /// Convert a string to a <see cref="Span"/>.
+    /// </summary>
+    /// <param name="content">The content.</param>
+    /// <returns>New <see cref="Span"/>.</returns>
+    public static implicit operator Span(string content)
+        => new(content);
 }

@@ -102,22 +102,19 @@ public class LayoutTest
     public void Direction()
     {
         var layout = new Layout();
-        layout.Direction(Boto.Layouts.Direction.Horizontal).Direction.Should().Be(Boto.Layouts.Direction.Horizontal);
-        layout.Direction(Boto.Layouts.Direction.Vertical).Direction.Should().Be(Boto.Layouts.Direction.Vertical);
-
-        layout.HorizontalDirection().Direction.Should().Be(Boto.Layouts.Direction.Horizontal);
-        layout.VerticalDirection().Direction.Should().Be(Boto.Layouts.Direction.Vertical);
+        layout.SetDirection(Boto.Layouts.Direction.Horizontal).Direction.Should().Be(Boto.Layouts.Direction.Horizontal);
+        layout.SetDirection(Boto.Layouts.Direction.Vertical).Direction.Should().Be(Boto.Layouts.Direction.Vertical);
     }
 
     [Fact]
     public void Margin()
     {
         var layout = new Layout();
-        layout.Margin(1).Margin.Should().Be(new Margin(1, 1));
-        layout.Margin(new Margin(2, 2)).Margin.Should().Be(new Margin(2, 2));
-        layout.Margin(3, 3).Margin.Should().Be(new Margin(3, 3));
-        layout.HorizontalMargin(5).Margin.Horizontal.Should().Be(5);
-        layout.VerticalMargin(6).Margin.Vertical.Should().Be(6);
+        layout.SetMargin(1).Margin.Should().Be(new Margin(1, 1));
+        layout.SetMargin(new Margin(2, 2)).Margin.Should().Be(new Margin(2, 2));
+        layout.SetMargin(3, 3).Margin.Should().Be(new Margin(3, 3));
+        layout.SetHorizontalMargin(5).Margin.Horizontal.Should().Be(5);
+        layout.SetVerticalMargin(6).Margin.Vertical.Should().Be(6);
     }
 
     [Fact]
@@ -127,7 +124,7 @@ public class LayoutTest
         layout.EnableExpandToFill().ExpandToFill.Should().BeTrue();
         layout.DisableExpandToFill().ExpandToFill.Should().BeFalse();
 
-        layout.ExpandToFill(true).ExpandToFill.Should().BeTrue();
+        layout.SetExpandToFill(true).ExpandToFill.Should().BeTrue();
     }
 
     [Fact]
@@ -150,7 +147,7 @@ public class LayoutTest
             .HaveCount(1);
         layout.Constraints.Clear();
         
-        layout.Constraints(new List<IConstraint> { Percentage(10), Max(5), Min(1) })
+        layout.SetConstraints(new List<IConstraint> { Percentage(10), Max(5), Min(1) })
             .Constraints.Should()
             .HaveCount(3);
         layout.Constraints.Clear();

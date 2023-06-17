@@ -3,7 +3,8 @@ using Boto.Layouts;
 using Boto.Styles;
 using Boto.Terminals;
 using Boto.Tutu;
-using Boto.Widget;
+using Boto.Widgets;
+using Boto.Widgets.Extensions;
 using NodaTime;
 using Tutu.Events;
 using Tutu.Extensions;
@@ -22,8 +23,7 @@ var stdout = Console.Out;
 SystemTerminal.Instance.EnableRawMode();
 stdout.Execute(EnterAlternateScreen, EnableMouseCapture);
 
-var backend = new TutuBackend(stdout);
-var terminal = new Terminal<TutuBackend>(backend);
+var terminal = new Terminal(new TutuBackend(stdout));
 
 var error = string.Empty;
 try
@@ -39,8 +39,7 @@ SystemTerminal.Instance.DisableRawMode();
 stdout.Execute(LeaveAlternateScreen, DisableMouseCapture, Show);
 Console.WriteLine(error);
 
-static void RunApp<T>(ITerminal<T> terminal, App app, Duration tickRate)
-    where T : class, IBackend
+static void RunApp(Boto.Terminals.ITerminal terminal, App app, Duration tickRate)
 {
     var lastTick = SystemClock.Instance.GetCurrentInstant();
     while (true)
@@ -67,12 +66,11 @@ static void RunApp<T>(ITerminal<T> terminal, App app, Duration tickRate)
 }
 
 
-static void Ui<T>(Frame<T> frame, App app)
-    where T : class, IBackend
+static void Ui(Frame frame, App app)
 {
     var chunks = new Layout()
-        .Direction(Direction.Vertical)
-        .Margin(2)
+        .SetDirection(Direction.Vertical)
+        .SetMargin(2)
         .AddConstraints(Constraints.Percentage(25),
             Constraints.Percentage(25),
             Constraints.Percentage(25),
@@ -80,29 +78,29 @@ static void Ui<T>(Frame<T> frame, App app)
         .Split(frame.Size);
 
     frame.Render(new Gauge()
-        .Block(new Block().Title("Gauge1").Borders(Borders.All))
-        .GaugeStyle(new() { Foreground = Color.Yellow })
-        .Percent(app.Progress1), chunks[0]);
+        .SetBlock(new Block().SetTitle("Gauge1").SetBorders(Borders.All))
+        .SetGaugeStyle(new() { Foreground = Color.Yellow })
+        .SetPercent(app.Progress1), chunks[0]);
 
     frame.Render(new Gauge()
-        .Block(new Block().Title("Gauge2").Borders(Borders.All))
-        .GaugeStyle(new() { Foreground = Color.Magenta, Background = Color.Green })
-        .Label($"{app.Progress2}/100")
-        .Percent(app.Progress2), chunks[1]);
+        .SetBlock(new Block().SetTitle("Gauge2").SetBorders(Borders.All))
+        .SetGaugeStyle(new() { Foreground = Color.Magenta, Background = Color.Green })
+        .SetLabel($"{app.Progress2}/100")
+        .SetPercent(app.Progress2), chunks[1]);
 
     frame.Render(new Gauge()
-        .Block(new Block().Title("Gauge3").Borders(Borders.All))
-        .GaugeStyle(new() { Foreground = Color.Yellow })
-        .Ratio(app.Progress3)
-        .Label($"{app.Progress3 * 100:00.00}%",
+        .SetBlock(new Block().SetTitle("Gauge3").SetBorders(Borders.All))
+        .SetGaugeStyle(new() { Foreground = Color.Yellow })
+        .SetRatio(app.Progress3)
+        .SetLabel($"{app.Progress3 * 100:00.00}%",
             new() { Foreground = Color.Red, AddModifier = Modifier.Italic | Modifier.Bold })
         .EnableUnicode(), chunks[2]);
 
     frame.Render(new Gauge()
-        .Block(new Block().Title("Gauge4").Borders(Borders.All))
-        .GaugeStyle(new() { Foreground = Color.Cyan, AddModifier = Modifier.Italic })
-        .Percent(app.Progress4)
-        .Label($"{app.Progress4} / 100"), chunks[3]);
+        .SetBlock(new Block().SetTitle("Gauge4").SetBorders(Borders.All))
+        .SetGaugeStyle(new() { Foreground = Color.Cyan, AddModifier = Modifier.Italic })
+        .SetPercent(app.Progress4)
+        .SetLabel($"{app.Progress4} / 100"), chunks[3]);
 }
 
 public record App

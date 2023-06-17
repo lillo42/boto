@@ -3,7 +3,8 @@ using Boto.Layouts;
 using Boto.Styles;
 using Boto.Terminals;
 using Boto.Tutu;
-using Boto.Widget;
+using Boto.Widgets;
+using Boto.Widgets.Extensions;
 using NodaTime;
 using Tutu.Events;
 using Tutu.Extensions;
@@ -48,8 +49,7 @@ var stdout = Console.Out;
 SystemTerminal.Instance.EnableRawMode();
 stdout.Execute(EnterAlternateScreen, EnableMouseCapture);
 
-var backend = new TutuBackend(stdout);
-var terminal = new Terminal<TutuBackend>(backend);
+var terminal = new Terminal(new TutuBackend(stdout));
 
 var error = string.Empty;
 try
@@ -65,8 +65,7 @@ SystemTerminal.Instance.DisableRawMode();
 stdout.Execute(LeaveAlternateScreen, DisableMouseCapture, Show);
 Console.WriteLine(error);
 
-static void RunApp<T>(ITerminal<T> terminal, App app, Duration tickRate)
-    where T : class, IBackend
+static void RunApp(Boto.Terminals.ITerminal terminal, App app, Duration tickRate)
 {
     var lastTick = SystemClock.Instance.GetCurrentInstant();
     while (true)
@@ -93,23 +92,22 @@ static void RunApp<T>(ITerminal<T> terminal, App app, Duration tickRate)
 }
 
 
-static void Ui<T>(Frame<T> frame, App app)
-    where T : class, IBackend
+static void Ui(Frame frame, App app)
 {
     var chunks = new Layout() 
-        .VerticalDirection()
-        .Margin(2)
+        .SetDirection(Direction.Vertical)
+        .SetMargin(2)
         .AddConstraints(Constraints.Percentage(50), Constraints.Percentage(50))
         .Split(frame.Size);
 
     frame.Render(new BarChart()
-            .Block(new Block()
-                .Title("Data1")
-                .Borders(Borders.All))
+            .SetBlock(new Block()
+                .SetTitle("Data1")
+                .SetBorders(Borders.All))
             .AddItems(app.Data)
-            .BarWidth(9)
-            .BarStyle(new() { Foreground = Color.Yellow })
-            .ValueStyle(new() { Foreground = Color.Black, Background = Color.Yellow }),
+            .SetBarWidth(9)
+            .SetBarStyle(new() { Foreground = Color.Yellow })
+            .SetValueStyle(new() { Foreground = Color.Black, Background = Color.Yellow }),
         chunks[0]);
 
     chunks = new Layout
@@ -119,26 +117,26 @@ static void Ui<T>(Frame<T> frame, App app)
     }.Split(chunks[1]);
 
     frame.Render(new BarChart()
-            .Block(new Block()
-                .Title("Data2")
-                .Borders(Borders.All))
+            .SetBlock(new Block()
+                .SetTitle("Data2")
+                .SetBorders(Borders.All))
             .AddItems(app.Data)
-            .BarWidth(5)
-            .BarGap(3)
-            .BarStyle(new() { Foreground = Color.Green })
-            .ValueStyle(new() { Foreground = Color.Green, AddModifier = Modifier.Bold }),
+            .SetBarWidth(5)
+            .SetBarGap(3)
+            .SetBarStyle(new() { Foreground = Color.Green })
+            .SetValueStyle(new() { Foreground = Color.Green, AddModifier = Modifier.Bold }),
         chunks[0]);
 
     frame.Render(new BarChart()
-            .Block(new Block()
-                .Title("Data3")
-                .Borders(Borders.All))
+            .SetBlock(new Block()
+                .SetTitle("Data3")
+                .SetBorders(Borders.All))
             .AddItems(app.Data)
-            .BarWidth(7)
-            .BarGap(0)
-            .BarStyle(new() { Foreground = Color.Red })
-            .ValueStyle(new() { Foreground = Color.Red })
-            .LabelStyle(new() { Foreground = Color.Cyan, AddModifier = Modifier.Italic }),
+            .SetBarWidth(7)
+            .SetBarGap(0)
+            .SetBarStyle(new() { Foreground = Color.Red })
+            .SetValueStyle(new() { Foreground = Color.Red })
+            .SetLabelStyle(new() { Foreground = Color.Cyan, AddModifier = Modifier.Italic }),
         chunks[1]);
 }
 

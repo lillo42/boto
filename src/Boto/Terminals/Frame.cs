@@ -1,5 +1,5 @@
 ﻿using Boto.Layouts;
-using Boto.Widget;
+using Boto.Widgets;
 
 namespace Boto.Terminals;
 
@@ -7,16 +7,14 @@ namespace Boto.Terminals;
 /// A consistent terminal interface for rendering.
 /// </summary>
 /// <param name="Terminal">The <see cref="ITerminal"/>.</param>
-/// <typeparam name="T">The backend implementation.</typeparam>
-public record Frame<T>(ITerminal<T> Terminal)
-    where T : class, IBackend
+public record Frame(ITerminal Terminal)
 {
     /// <summary>
-    /// Initializes a new instance of the <see cref="Frame{T}"/> class.
+    /// Initializes a new instance of the <see cref="Frame"/> class.
     /// </summary>
-    /// <param name="terminal">The <see cref="ITerminal{T}"/>.</param>
+    /// <param name="terminal">The <see cref="ITerminal"/>.</param>
     /// <param name="position">The cursor position.</param>
-    public Frame(ITerminal<T> terminal, CursorPosition? position)
+    public Frame(ITerminal terminal, CursorPosition? position)
         : this(terminal)
     {
         _cursorPosition = position;
@@ -34,7 +32,7 @@ public record Frame<T>(ITerminal<T> Terminal)
     /// </summary>
     /// <remarks>
     /// If <see langword="null"/>, the cursor is hidden and its position is controlled by the backend. If `(x,
-    /// y)`, the cursor is shown and placed at `(x, y)` after the call to <see cref="ITerminal{T}.Draw"/>.
+    /// y)`, the cursor is shown and placed at `(x, y)` after the call to <see cref="ITerminal.Draw"/>.
     /// </remarks>
     public CursorPosition? CursorPosition
     {

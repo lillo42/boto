@@ -7,7 +7,8 @@ using Boto.Symbols;
 using Boto.Terminals;
 using Boto.Texts;
 using Boto.Tutu;
-using Boto.Widget;
+using Boto.Widgets;
+using Boto.Widgets.Extensions;
 using NodaTime;
 using Tutu.Events;
 using Tutu.Extensions;
@@ -15,7 +16,7 @@ using Tutu.Terminal;
 using static Tutu.Commands.Cursor;
 using static Tutu.Commands.Events;
 using static Tutu.Commands.Terminal;
-using Block = Boto.Widget.Block;
+using Block = Boto.Widgets.Block;
 
 var app = new App
 {
@@ -31,8 +32,7 @@ var stdout = Console.Out;
 SystemTerminal.Instance.EnableRawMode();
 stdout.Execute(EnterAlternateScreen, EnableMouseCapture);
 
-var backend = new TutuBackend(stdout);
-var terminal = new Terminal<TutuBackend>(backend);
+var terminal = new Terminal(new TutuBackend(stdout));
 
 var error = string.Empty;
 try
@@ -48,8 +48,7 @@ SystemTerminal.Instance.DisableRawMode();
 stdout.Execute(LeaveAlternateScreen, DisableMouseCapture, Show);
 Console.WriteLine(error);
 
-static void RunApp<T>(ITerminal<T> terminal, App app, Duration tickRate)
-    where T : class, IBackend
+static void RunApp(Boto.Terminals.ITerminal terminal, App app, Duration tickRate)
 {
     var lastTick = SystemClock.Instance.GetCurrentInstant();
     while (true)
@@ -76,11 +75,10 @@ static void RunApp<T>(ITerminal<T> terminal, App app, Duration tickRate)
 }
 
 
-static void Ui<T>(Frame<T> frame, App app)
-    where T : class, IBackend
+static void Ui(Frame frame, App app)
 {
     var chunks = new Layout()
-        .Direction(Direction.Vertical)
+        .SetDirection(Direction.Vertical)
         .AddConstraints(
             Constraints.Ratio(1, 3),
             Constraints.Ratio(1, 3),
@@ -97,30 +95,30 @@ static void Ui<T>(Frame<T> frame, App app)
     var datasets = new List<Dataset>
     {
         new Dataset()
-            .Name("data2")
-            .Marker(Marker.Dot)
-            .Style(new() { Foreground = Color.Cyan })
-            .Data(app.Data1),
+            .SetName("data2")
+            .SetMarker(Marker.Dot)
+            .SetStyle(new() { Foreground = Color.Cyan })
+            .SetData(app.Data1),
         new Dataset()
-            .Name("data3")
-            .Marker(Marker.Braille)
-            .Style(new() { Foreground = Color.Yellow })
-            .Data(app.Data2),
+            .SetName("data3")
+            .SetMarker(Marker.Braille)
+            .SetStyle(new() { Foreground = Color.Yellow })
+            .SetData(app.Data2),
     };
 
     frame.Render(new Chart(datasets)
-            .Block(new Block()
-                .Title("Chart 1", new() { Foreground = Color.Cyan, AddModifier = Modifier.Bold })
-                .Borders(Borders.All))
-            .XAxis(new Axis()
-                .Title("X Axis")
-                .Style(new() { Foreground = Color.Gray })
+            .SetBlock(new Block()
+                .SetTitle("Chart 1", new() { Foreground = Color.Cyan, AddModifier = Modifier.Bold })
+                .SetBorders(Borders.All))
+            .SetXAxis(new Axis()
+                .SetTitle("X Axis")
+                .SetStyle(new() { Foreground = Color.Gray })
                 .AddLabels(xLabels)
-                .Bounds(app.Window))
+                .SetBounds(app.Window))
             .YAxis(new Axis()
-                .Title("Y Axis")
-                .Style(new() { Foreground = Color.Gray })
-                .Bounds(-20, 20)
+                .SetTitle("Y Axis")
+                .SetStyle(new() { Foreground = Color.Gray })
+                .SetBounds(-20, 20)
                 .AddLabels(
                     new Span("-20", new() { AddModifier = Modifier.Bold }),
                     new Span("0"),
@@ -130,30 +128,30 @@ static void Ui<T>(Frame<T> frame, App app)
     datasets = new List<Dataset>
     {
         new Dataset()
-            .Name("data")
-            .Marker(Marker.Braille)
-            .Style(new() { Foreground = Color.Yellow })
-            .GraphType(GraphType.Line)
-            .Data(new[] { (0.0, 0.0), (1.0, 1.0), (2.0, 2.0), (3.0, 3.0), (4.0, 4.0) }),
+            .SetName("data")
+            .SetMarker(Marker.Braille)
+            .SetStyle(new() { Foreground = Color.Yellow })
+            .SetGraphType(GraphType.Line)
+            .SetData(new[] { (0.0, 0.0), (1.0, 1.0), (2.0, 2.0), (3.0, 3.0), (4.0, 4.0) }),
     };
 
     frame.Render(new Chart()
-            .Dataset(datasets)
-            .Block(new Block()
-                .Title("Chart 2", new() { Foreground = Color.Cyan, AddModifier = Modifier.Bold })
-                .Borders(Borders.All))
-            .XAxis(new Axis()
-                .Title("X Axis")
-                .Style(new() { Foreground = Color.Gray })
+            .SetDataset(datasets)
+            .SetBlock(new Block()
+                .SetTitle("Chart 2", new() { Foreground = Color.Cyan, AddModifier = Modifier.Bold })
+                .SetBorders(Borders.All))
+            .SetXAxis(new Axis()
+                .SetTitle("X Axis")
+                .SetStyle(new() { Foreground = Color.Gray })
                 .AddLabels(
                     new Span("0", new Style { AddModifier = Modifier.Bold }),
                     new Span("2.5"),
                     new Span("5.0", new Style { AddModifier = Modifier.Bold }))
-                .Bounds(0, 5))
+                .SetBounds(0, 5))
             .YAxis(new Axis()
-                .Title("Y Axis")
-                .Style(new() { Foreground = Color.Gray })
-                .Bounds(0, 5)
+                .SetTitle("Y Axis")
+                .SetStyle(new() { Foreground = Color.Gray })
+                .SetBounds(0, 5)
                 .AddLabels(
                     new Span("0", new() { AddModifier = Modifier.Bold }),
                     new Span("2.5"),
@@ -163,30 +161,30 @@ static void Ui<T>(Frame<T> frame, App app)
     datasets = new List<Dataset>
     {
         new Dataset()
-            .Name("data")
-            .Marker(Marker.Braille)
-            .Style(new() { Foreground = Color.Yellow })
-            .GraphType(GraphType.Line)
-            .Data(new[] { (0.0, 0.0), (10.0, 1.0), (20.0, 0.5), (30.0, 1.5), (40.0, 1.0), (50.0, 2.5), (60.0, 3.0) }),
+            .SetName("data")
+            .SetMarker(Marker.Braille)
+            .SetStyle(new() { Foreground = Color.Yellow })
+            .SetGraphType(GraphType.Line)
+            .SetData(new[] { (0.0, 0.0), (10.0, 1.0), (20.0, 0.5), (30.0, 1.5), (40.0, 1.0), (50.0, 2.5), (60.0, 3.0) }),
     };
 
     frame.Render(new Chart()
-            .Dataset(datasets)
-            .Block(new Block()
-                .Title("Chart 3", new() { Foreground = Color.Cyan, AddModifier = Modifier.Bold })
-                .Borders(Borders.All))
-            .XAxis(new Axis()
-                .Title("X Axis")
-                .Style(new() { Foreground = Color.Gray })
+            .SetDataset(datasets)
+            .SetBlock(new Block()
+                .SetTitle("Chart 3", new() { Foreground = Color.Cyan, AddModifier = Modifier.Bold })
+                .SetBorders(Borders.All))
+            .SetXAxis(new Axis()
+                .SetTitle("X Axis")
+                .SetStyle(new() { Foreground = Color.Gray })
                 .AddLabels(
                     new Span("0", new Style { AddModifier = Modifier.Bold }),
                     new Span("25"),
                     new Span("50", new Style { AddModifier = Modifier.Bold }))
-                .Bounds(0, 50))
+                .SetBounds(0, 50))
             .YAxis(new Axis()
-                .Title("Y Axis")
-                .Style(new() { Foreground = Color.Gray })
-                .Bounds(0, 5)
+                .SetTitle("Y Axis")
+                .SetStyle(new() { Foreground = Color.Gray })
+                .SetBounds(0, 5)
                 .AddLabels(
                     new Span("0", new() { AddModifier = Modifier.Bold }),
                     new Span("2.5"),

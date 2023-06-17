@@ -3,7 +3,8 @@ using Boto.Layouts;
 using Boto.Styles;
 using Boto.Terminals;
 using Boto.Tutu;
-using Boto.Widget;
+using Boto.Widgets;
+using Boto.Widgets.Extensions;
 using Tutu.Events;
 using Tutu.Extensions;
 using Tutu.Terminal;
@@ -16,8 +17,7 @@ var stdout = Console.Out;
 SystemTerminal.Instance.EnableRawMode();
 stdout.Execute(EnterAlternateScreen, EnableMouseCapture);
 
-var backend = new TutuBackend(stdout);
-var terminal = new Terminal<TutuBackend>(backend);
+var terminal = new Terminal(new TutuBackend(stdout));
 
 var error = string.Empty;
 try
@@ -34,8 +34,7 @@ stdout.Execute(LeaveAlternateScreen, DisableMouseCapture, Show);
 Console.WriteLine(error);
 
 
-static void RunApp<T>(ITerminal<T> terminal)
-    where T : class, IBackend
+static void RunApp(Boto.Terminals.ITerminal terminal)
 {
     while (true)
     {
@@ -49,8 +48,7 @@ static void RunApp<T>(ITerminal<T> terminal)
 }
 
 
-static void Ui<T>(Frame<T> frame)
-    where T : class, IBackend
+static void Ui(Frame frame)
 {
     // Wrapping block for a group
     // Just draw the block and the group on the same area and build the group
@@ -60,57 +58,57 @@ static void Ui<T>(Frame<T> frame)
     // Surrounding block
 
     frame.Render(new Block()
-        .Title("Main block with round corners")
-        .CenterTitleAlignment()
-        .RoundedBorderType(), size);
+        .SetTitle("Main block with round corners")
+        .SetTitleAlignment(Alignment.Center)
+        .SetBorderType(BorderType.Rounded), size);
 
     var chunks = new Layout()
-        .VerticalDirection()
-        .Margin(4)
+        .SetDirection(Direction.Vertical)
+        .SetMargin(4)
         .AddConstraints(Constraints.Percentage(50), Constraints.Percentage(50))
         .Split(size);
 
     // Top two inner blocks
     var topChunks = new Layout()
-        .HorizontalDirection()
+        .SetDirection(Direction.Horizontal)
         .AddConstraints(Constraints.Percentage(50), Constraints.Percentage(50))
         .Split(chunks[0]);
 
 
     // Top left inner block with green background
     frame.Render(new Block()
-            .Title(
+            .SetTitle(
                 new("With ", new() { Foreground = Color.Yellow }),
                 " background")
-            .Style(new() { Background = Color.Green }),
+            .SetStyle(new() { Background = Color.Green }),
         topChunks[0]);
 
     // Top right inner block with styled title aligned to the right
     frame.Render(new Block()
-            .Title("Styled title",
+            .SetTitle("Styled title",
                 new Style { Foreground = Color.White, Background = Color.Red, AddModifier = Modifier.Bold })
-            .TitleAlignment(Alignment.Right)
-            .Style(new() { Background = Color.Blue }),
+            .SetTitleAlignment(Alignment.Right)
+            .SetStyle(new() { Background = Color.Blue }),
         topChunks[1]);
 
 
     // Bottom two inner blocks
     var bottomChunks = new Layout()
-        .HorizontalDirection()
+        .SetDirection(Direction.Horizontal)
         .AddConstraints(Constraints.Percentage(50), Constraints.Percentage(50))
         .Split(chunks[1]);
 
     // Bottom left block with all default borders
     frame.Render(new Block()
-        .Title("With borders")
-        .AllBorders(), bottomChunks[0]);
+        .SetTitle("With borders")
+        .SetBorders(Borders.All), bottomChunks[0]);
 
 
     // Bottom right block with styled left and right border
     frame.Render(new Block()
-            .Title("Styled boarders")
-            .Borders(Borders.Left | Borders.Right)
-            .DoubleBorderType()
-            .BorderStyle(new() { Foreground = Color.Cyan }),
+            .SetTitle("Styled boarders")
+            .SetBorders(Borders.Left | Borders.Right)
+            .SetBorderType(BorderType.Double)
+            .SetBorderStyle(new() { Foreground = Color.Cyan }),
         bottomChunks[1]);
 }

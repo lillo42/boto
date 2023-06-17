@@ -1,4 +1,4 @@
-﻿using Boto.Widget;
+﻿using Boto.Widgets;
 
 namespace ListSample;
 

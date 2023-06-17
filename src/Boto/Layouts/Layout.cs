@@ -11,16 +11,25 @@ namespace Boto.Layouts;
 /// </summary>
 public class Layout
 {
-    private static readonly ThreadLocal<Dictionary<(Rect, Layout), List<Rect>>> s_cache = new(() => new Dictionary<(Rect, Layout), List<Rect>>());
+    private static readonly ThreadLocal<Dictionary<(Rect, Layout), List<Rect>>> s_cache = new(() =>
+        new Dictionary<(Rect, Layout), List<Rect>>());
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="Layout"/> class.
+    /// </summary>
     public Layout()
         : this(Direction.Vertical, new(0, 0), new List<IConstraint>(), true)
     {
     }
 
+  
     /// <summary>
-    /// The layout.
+    /// Initializes a new instance of the <see cref="Layout"/> class.
     /// </summary>
+    /// <param name="direction">The <see cref="Boto.Layouts.Direction"/>.</param>
+    /// <param name="margin">The <see cref="Layouts.Margin"/>.</param>
+    /// <param name="constraints">The collection of <see cref="IConstraint"/>.</param>
+    /// <param name="expandToFill">Flags indicating should expand.</param>
     public Layout(Direction direction, Margin margin, List<IConstraint> constraints, bool expandToFill)
     {
         Direction = direction;
@@ -29,11 +38,31 @@ public class Layout
         ExpandToFill = expandToFill;
     }
 
+    /// <summary>
+    /// The <see cref="Boto.Layouts.Direction"/>.
+    /// </summary>
     public Direction Direction { get; set; }
+    
+    /// <summary>
+    /// The <see cref="Layouts.Margin"/>.
+    /// </summary>
     public Margin Margin { get; set; }
+    
+    /// <summary>
+    /// The collection of <see cref="IConstraint"/>.
+    /// </summary>
     public List<IConstraint> Constraints { get; set; }
+    
+    /// <summary>
+    /// Flags indicating should expand.
+    /// </summary>
     public bool ExpandToFill { get; set; }
 
+    /// <summary>
+    /// Split the area.
+    /// </summary>
+    /// <param name="area">The area to be split.</param>
+    /// <returns>The collection of <see cref="Rect"/>.</returns>
     public List<Rect> Split(Rect area)
     {
         // TODO: Maybe use a fixed size cache?
@@ -112,11 +141,11 @@ public class Layout
                 {
                     LengthConstraint length => elements[index].Width | Eq(Weak) | length.Length,
                     PercentageConstraint percentage => elements[index].Width
-                                                       | Eq(Weak) 
-                                                       | ((double)destArea.Width * percentage.Percentage / 100),
-                    RatioConstraint ratio => elements[index].Width 
-                                             | Eq(Weak) 
-                                             | ((double)destArea.Width * ratio.Value / ratio.Density),
+                                                       | Eq(Weak)
+                                                       | (destArea.Width * percentage.Percentage / 100d),
+                    RatioConstraint ratio => elements[index].Width
+                                             | Eq(Weak)
+                                             | (destArea.Width * ratio.Value / (double)ratio.Density),
                     MaxConstraint max => elements[index].Width | LessOrEq(Weak) | max.Max,
                     MinConstraint min => elements[index].Width | GreaterOrEq(Weak) | min.Min,
                     _ => throw new ArgumentException("Invalid constraint.")
@@ -137,12 +166,12 @@ public class Layout
                 ccs.Add(constraint switch
                 {
                     LengthConstraint length => elements[index].Height | Eq(Weak) | length.Length,
-                    PercentageConstraint percentage => elements[index].Height 
-                                                       | Eq(Weak) 
-                                                       | ((double)percentage.Percentage * destArea.Height / 100),
-                    RatioConstraint ratio => elements[index].Height 
-                                             | Eq(Weak) 
-                                             | ((double)destArea.Height * ratio.Value / ratio.Density),
+                    PercentageConstraint percentage => elements[index].Height
+                                                       | Eq(Weak)
+                                                       | (percentage.Percentage * destArea.Height / 100d),
+                    RatioConstraint ratio => elements[index].Height
+                                             | Eq(Weak)
+                                             | (destArea.Height * ratio.Value / (double)ratio.Density),
                     MaxConstraint max => elements[index].Height | LessOrEq(Weak) | max.Max,
                     MinConstraint min => elements[index].Height | GreaterOrEq(Weak) | min.Min,
                     _ => throw new ArgumentException("Invalid constraint.")
@@ -155,7 +184,7 @@ public class Layout
         foreach (var (variable, value) in solver.FetchChanges())
         {
             var (index, attr) = vars[variable];
-            var val = (int)MathF.Max(value, 0);
+            var val = (int)Math.Max(value, 0);
 
             result[index] = attr switch
             {

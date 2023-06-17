@@ -3,7 +3,8 @@ using Boto.Layouts;
 using Boto.Styles;
 using Boto.Terminals;
 using Boto.Tutu;
-using Boto.Widget;
+using Boto.Widgets;
+using Boto.Widgets.Extensions;
 using NodaTime;
 using Tutu.Events;
 using Tutu.Extensions;
@@ -44,8 +45,7 @@ var stdout = Console.Out;
 SystemTerminal.Instance.EnableRawMode();
 stdout.Execute(EnterAlternateScreen, EnableMouseCapture);
 
-var backend = new TutuBackend(stdout);
-var terminal = new Terminal<TutuBackend>(backend);
+var terminal = new Terminal(new TutuBackend(stdout));
 
 var error = string.Empty;
 try
@@ -61,8 +61,7 @@ SystemTerminal.Instance.DisableRawMode();
 stdout.Execute(LeaveAlternateScreen, DisableMouseCapture, Show);
 Console.WriteLine(error);
 
-static void RunApp<T>(ITerminal<T> terminal, App app, Duration tickRate)
-    where T : class, IBackend
+static void RunApp(Boto.Terminals.ITerminal terminal, App app, Duration tickRate)
 {
     var lastTick = SystemClock.Instance.GetCurrentInstant();
     while (true)
@@ -98,11 +97,10 @@ static void RunApp<T>(ITerminal<T> terminal, App app, Duration tickRate)
 }
 
 
-static void Ui<T>(Frame<T> frame, App app)
-    where T : class, IBackend
+static void Ui(Frame frame, App app)
 {
     var chunks = new Layout()
-        .Margin(5)
+        .SetMargin(5)
         .AddConstraints(Constraints.Percentage(100))
         .Split(frame.Size);
 
@@ -118,12 +116,12 @@ static void Ui<T>(Frame<T> frame, App app)
 
     frame.Render(
         new Table(rows.ToList())
-            .Block(new Block()
-                .Title("Table")
-                .AllBorders())
-            .HighlightStyle(new() { AddModifier = Modifier.Reversed })
+            .SetBlock(new Block()
+                .SetTitle("Table")
+                .SetBorders(Borders.All))
+            .SetHighlightStyle(new() { AddModifier = Modifier.Reversed })
             .HighlightSymbol(">> ")
-            .Headers(new(headersCells)
+            .SetHeaders(new(headersCells)
             {
                 Style = new() { Background = Color.Blue },
                 Height = 1,

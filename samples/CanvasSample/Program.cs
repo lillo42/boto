@@ -3,8 +3,9 @@ using Boto.Layouts;
 using Boto.Styles;
 using Boto.Terminals;
 using Boto.Tutu;
-using Boto.Widget;
-using Boto.Widget.Canvas;
+using Boto.Widgets;
+using Boto.Widgets.Canvas;
+using Boto.Widgets.Extensions;
 using NodaTime;
 using Tutu.Events;
 using Tutu.Extensions;
@@ -37,8 +38,7 @@ var stdout = Console.Out;
 SystemTerminal.Instance.EnableRawMode();
 stdout.Execute(EnterAlternateScreen, EnableMouseCapture);
 
-var backend = new TutuBackend(stdout);
-var terminal = new Terminal<TutuBackend>(backend);
+var terminal = new Terminal(new TutuBackend(stdout));
 
 var error = string.Empty;
 try
@@ -54,8 +54,7 @@ SystemTerminal.Instance.DisableRawMode();
 stdout.Execute(LeaveAlternateScreen, DisableMouseCapture, Show);
 Console.WriteLine(error);
 
-static void RunApp<T>(ITerminal<T> terminal, App app, Duration tickRate)
-    where T : class, IBackend
+static void RunApp(Boto.Terminals.ITerminal terminal, App app, Duration tickRate)
 {
     var lastTick = SystemClock.Instance.GetCurrentInstant();
     while (true)
@@ -102,18 +101,17 @@ static void RunApp<T>(ITerminal<T> terminal, App app, Duration tickRate)
 }
 
 
-static void Ui<T>(Frame<T> frame, App app)
-    where T : class, IBackend
+static void Ui(Frame frame, App app)
 {
     var chunks = new Layout()
-        .Direction(Direction.Horizontal)
+        .SetDirection(Direction.Horizontal)
         .AddConstraints(Constraints.Percentage(50), Constraints.Percentage(50))
         .Split(frame.Size);
 
     var canvas = new Canvas()
-        .Block(new Block().Title("World").Borders(Borders.All))
-        .XBounds(-180, 180)
-        .YBounds(-90, 90);
+        .SetBlock(new Block().SetTitle("World").SetBorders(Borders.All))
+        .SetXBounds(-180, 180)
+        .SetYBounds(-90, 90);
 
     canvas.Painter = context =>
     {
@@ -125,9 +123,9 @@ static void Ui<T>(Frame<T> frame, App app)
 
 
     canvas = new Canvas()
-        .Block(new Block().Title("Pong").Borders(Borders.All))
-        .XBounds(10, 110)
-        .YBounds(10, 110);
+        .SetBlock(new Block().SetTitle("Pong").SetBorders(Borders.All))
+        .SetXBounds(10, 110)
+        .SetYBounds(10, 110);
 
     canvas.Painter = context => context.Draw(app.Ball);
 

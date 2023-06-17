@@ -3,17 +3,17 @@
 namespace Boto.Symbols;
 
 /// <summary>
-/// 
+/// The braille symbols.
 /// </summary>
 public static class Braille
 {
     /// <summary>
-    /// 
+    /// The blank braille symbol.
     /// </summary>
     public const ushort Blank = 0x2800;
 
     /// <summary>
-    /// 
+    /// The dots.
     /// </summary>
     public static readonly ImmutableArray<ImmutableArray<ushort>> Dots =
         ImmutableArray<ImmutableArray<ushort>>

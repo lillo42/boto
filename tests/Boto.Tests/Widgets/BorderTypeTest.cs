@@ -1,5 +1,5 @@
 ﻿using Boto.Symbols;
-using Boto.Widget;
+using Boto.Widgets;
 using FluentAssertions;
 
 namespace Boto.Tests.Widgets;

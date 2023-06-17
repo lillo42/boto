@@ -2,7 +2,7 @@
 using Boto.Layouts;
 using Boto.Terminals;
 using Boto.Tutu;
-using Boto.Widget;
+using Boto.Widgets;
 using Tutu.Events;
 using Tutu.Extensions;
 using Tutu.Terminal;
@@ -15,8 +15,7 @@ var stdout = Console.Out;
 SystemTerminal.Instance.EnableRawMode();
 stdout.Execute(EnterAlternateScreen, EnableMouseCapture);
 
-var backend = new TutuBackend(stdout);
-var terminal = new Terminal<TutuBackend>(backend);
+var terminal = new Terminal(new TutuBackend(stdout));
 
 var error = string.Empty;
 try
@@ -33,8 +32,7 @@ stdout.Execute(LeaveAlternateScreen, DisableMouseCapture, Show);
 Console.WriteLine(error);
 
 
-static void RunApp<T>(ITerminal<T> terminal)
-    where T : class, IBackend
+static void RunApp(Boto.Terminals.ITerminal terminal)
 {
     while (true)
     {
@@ -48,11 +46,10 @@ static void RunApp<T>(ITerminal<T> terminal)
 }
 
 
-static void Ui<T>(Frame<T> frame)
-    where T : class, IBackend
+static void Ui(Frame frame)
 {
     var chunks = new Layout()
-        .Direction(Direction.Vertical)
+        .SetDirection(Direction.Vertical)
         .AddConstraints(
             Constraints.Percentage(10),
             Constraints.Percentage(80),

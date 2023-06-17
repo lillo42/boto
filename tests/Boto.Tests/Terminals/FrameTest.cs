@@ -1,6 +1,6 @@
 ﻿using Boto.Layouts;
 using Boto.Terminals;
-using Boto.Widget;
+using Boto.Widgets;
 using FluentAssertions;
 using NSubstitute;
 
@@ -11,8 +11,8 @@ public class FrameTest
     [Fact]
     public void Size_Should_Return_TerminalViewportArea()
     {
-        var terminal = Substitute.For<ITerminal<IBackend>>();
-        var frame = new Frame<IBackend>(terminal, null);
+        var terminal = Substitute.For<ITerminal>();
+        var frame = new Frame(terminal, null);
 
         var area = new Rect(0, 0, 10, 10);
         terminal.Viewport.Returns(new Viewport(area, ResizeBehavior.Auto));
@@ -22,8 +22,8 @@ public class FrameTest
     [Fact]
     public void CursorPosition_Should_Set_CursorPosition()
     {
-        var terminal = Substitute.For<ITerminal<IBackend>>();
-        var frame = new Frame<IBackend>(terminal, new CursorPosition(1, 1));
+        var terminal = Substitute.For<ITerminal>();
+        var frame = new Frame(terminal, new CursorPosition(1, 1));
 
         frame.CursorPosition.Should().NotBeNull();
         frame.CursorPosition = new CursorPosition(2, 2);
@@ -36,8 +36,8 @@ public class FrameTest
     [Fact]
     public void RenderWidget_Should_CallWidgetRender()
     {
-        var terminal = Substitute.For<ITerminal<IBackend>>();
-        var frame = new Frame<IBackend>(terminal, null);
+        var terminal = Substitute.For<ITerminal>();
+        var frame = new Frame(terminal, null);
         var widget = Substitute.For<IWidget>();
         var area = new Rect(0, 0, 10, 10);
 
@@ -51,8 +51,8 @@ public class FrameTest
     [Fact]
     public void RenderWidgetState_Should_CallWidgetRender()
     {
-        var terminal = Substitute.For<ITerminal<IBackend>>();
-        var frame = new Frame<IBackend>(terminal, null);
+        var terminal = Substitute.For<ITerminal>();
+        var frame = new Frame(terminal, null);
         var widget = Substitute.For<IStateWidget<object>>();
         var area = new Rect(0, 0, 10, 10);
 

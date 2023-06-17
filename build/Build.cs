@@ -51,9 +51,9 @@ class Build : NukeBuild
             DotNetClean(s => s
                 .SetProject(Solution)
                 .SetConfiguration(Configuration));
-            SourceDirectory.GlobDirectories("**/bin", "**/obj").ForEach(DeleteDirectory);
-            TestsDirectory.GlobDirectories("**/bin", "**/obj").ForEach(DeleteDirectory);
-            EnsureCleanDirectory(ArtifactsDirectory);
+            SourceDirectory.GlobDirectories("**/bin", "**/obj").DeleteDirectories();
+            TestsDirectory.GlobDirectories("**/bin", "**/obj").DeleteDirectories();
+            ArtifactsDirectory.CreateOrCleanDirectory();
         });
 
     Target Restore => _ => _
@@ -100,7 +100,7 @@ class Build : NukeBuild
                     .EnableCollectCoverage()
                     .SetCoverletOutputFormat(CoverletOutputFormat.opencover)
                     .When(IsServerBuild, _ => _.EnableUseSourceLink()))
-                .CombineWith(Solution.GetProjects("*.Tests"), (_, projectFile) => _
+                .CombineWith(Solution.GetAllProjects("*.Tests"), (_, projectFile) => _
                     .SetProjectFile(projectFile)
                     .SetLoggers($"trx;LogFileName={projectFile.Name}.trx")
                     .SetCoverletOutput(CoverageReportDirectory / $"{projectFile.Name}.xml")));
