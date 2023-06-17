@@ -130,7 +130,7 @@ class Build : NukeBuild
         });
 
     Target Publish => _ => _
-        .After(Pack)
+        .DependsOn(Pack)
         .Consumes(Pack)
         .Requires(() => NugetApiKey)
         .Requires(() => Configuration.Equals(Configuration.Release))
