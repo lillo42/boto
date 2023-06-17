@@ -1,17 +1,23 @@
+using System;
 using Nuke.Common;
 using Nuke.Common.CI;
 using Nuke.Common.CI.GitHubActions;
+using Nuke.Common.Execution;
 using Nuke.Common.Git;
 using Nuke.Common.IO;
 using Nuke.Common.ProjectModel;
 using Nuke.Common.Tooling;
 using Nuke.Common.Tools.Coverlet;
 using Nuke.Common.Tools.DotNet;
+using Nuke.Common.Tools.GitReleaseManager;
 using Nuke.Common.Tools.GitVersion;
-using Nuke.Common.Utilities.Collections;
-using static Nuke.Common.IO.FileSystemTasks;
+using Serilog;
 using static Nuke.Common.Tools.DotNet.DotNetTasks;
+using static Nuke.Common.Tools.GitReleaseManager.GitReleaseManagerTasks;
 
+[DotNetVerbosityMapping]
+[UnsetVisualStudioEnvironmentVariables]
+[ShutdownDotNetAfterServerBuild]
 class Build : NukeBuild
 {
     /// Support plugins are available for:
@@ -137,5 +143,27 @@ class Build : NukeBuild
                 .CombineWith(
                     PackageDirectory.GlobFiles("*.nupkg", "*.snupkg"),
                     (_, v) => _.SetTargetPath(v)));
+        });
+
+    Target CreateRelease => _ => _
+        .After(Publish)
+        .Requires(() => GitHubActions)
+        .Executes(() =>
+        {
+            try
+            {
+                GitReleaseManagerCreate(release => release
+                    .SetToken(GitHubActions.Token)
+                    .SetRepositoryName(GitHubActions.Repository)
+                    .SetRepositoryOwner(GitHubActions.RepositoryOwner)
+                    .SetName(GitVersion.AssemblySemVer)
+                    .SetTargetCommitish(GitHubActions.Sha)
+                    .AddAssetPaths(PackageDirectory)
+                );
+            }
+            catch (Exception e)
+            {
+                Log.Logger.Warning(e, "Failed to create release");
+            }
         });
 }
