@@ -6,79 +6,61 @@ namespace Boto.Terminals;
 /// <summary>
 /// Default implementation of <see cref="ITerminal"/>.
 /// </summary>
-public class Terminal : Terminal<IBackend>, ITerminal
-{
-    public Terminal(IBackend backend)
-        : base(backend)
-    {
-    }
-
-    public Terminal(IBackend backend, TerminalOptions options)
-        : base(backend, options)
-    {
-    }
-}
-
-/// <summary>
-/// Default implementation of <see cref="ITerminal{T}"/>.
-/// </summary>
-/// <typeparam name="T">The <see cref="IBackend"/>.</typeparam>
-public class Terminal<T> : ITerminal<T>
-    where T : class, IBackend
+public class Terminal : ITerminal
 {
     private int _current;
 
     /// <summary>
-    /// Initializes a new instance of the <see cref="Terminal{T}"/> class.
+    /// Initializes a new instance of the <see cref="Terminal"/> class.
     /// </summary>
     /// <param name="backend">The <see cref="IBackend"/>.</param>
-    public Terminal(T backend)
+    public Terminal(IBackend backend)
         : this(backend, new TerminalOptions(new Viewport(backend.Size, ResizeBehavior.Auto)))
     {
     }
 
     /// <summary>
-    /// Initializes a new instance of the <see cref="Terminal{T}"/> class.
+    /// Initializes a new instance of the <see cref="Terminal"/> class.
     /// </summary>
     /// <param name="backend">The <see cref="IBackend"/>.</param>
     /// <param name="options">The <see cref="TerminalOptions"/>.</param>
-    public Terminal(T backend, TerminalOptions options)
+    public Terminal(IBackend backend, TerminalOptions options)
     {
         Backend = backend;
         Viewport = options.Viewport;
         Buffers = new List<Buffer> { new(options.Viewport.Area), new(options.Viewport.Area), };
     }
 
-    /// <inheritdoc cref="ITerminal{T}.Buffers"/>
+    /// <inheritdoc cref="ITerminal.Buffers"/>
     public List<Buffer> Buffers { get; }
 
 
-    /// <inheritdoc cref="ITerminal{T}.IsCursorHidden"/>
+    /// <inheritdoc cref="ITerminal.IsCursorHidden"/>
     public bool IsCursorHidden { get; private set; }
 
-    /// <inheritdoc cref="ITerminal{T}.Cursor"/>
+    /// <inheritdoc cref="ITerminal.Cursor"/>
     public CursorPosition Cursor
     {
         get => Backend.CursorPosition;
         set => Backend.CursorPosition = value;
     }
 
-    /// <inheritdoc cref="ITerminal{T}.Frame"/>
-    public Frame<T> Frame => new(this, null);
+    /// <inheritdoc cref="ITerminal.Frame"/>
+    public Frame Frame => new(this, null);
 
-    /// <inheritdoc cref="ITerminal{T}.CurrentBuffer"/>
+    /// <inheritdoc cref="ITerminal.CurrentBuffer"/>
     public Buffer CurrentBuffer => Buffers[_current];
 
-    /// <inheritdoc cref="ITerminal{T}.Viewport"/>
+    /// <inheritdoc cref="ITerminal.Viewport"/>
     public Viewport Viewport { get; private set; }
 
-    /// <inheritdoc cref="ITerminal{T}.Size"/>
+    /// <inheritdoc cref="ITerminal.Size"/>
     public Rect Size => Backend.Size;
 
-    /// <inheritdoc cref="ITerminal{T}.Backend"/>
-    public T Backend { get; }
+    /// <inheritdoc cref="ITerminal.Backend"/>
+    public IBackend Backend { get; }
 
-    /// <inheritdoc cref="ITerminal{T}.Flush"/>
+    /// <inheritdoc cref="ITerminal.Flush"/>
     public void Flush()
     {
         var previousBuffer = Buffers[1 - _current];
@@ -88,7 +70,7 @@ public class Terminal<T> : ITerminal<T>
         Backend.Draw(updates);
     }
 
-    /// <inheritdoc cref="ITerminal{T}.Resize"/>
+    /// <inheritdoc cref="ITerminal.Resize"/>
     public void Resize(Rect area)
     {
         Buffers[_current].Resize(area);
@@ -97,7 +79,7 @@ public class Terminal<T> : ITerminal<T>
         Clear();
     }
 
-    /// <inheritdoc cref="ITerminal{T}.Autoresize"/>
+    /// <inheritdoc cref="ITerminal.Autoresize"/>
     public void Autoresize()
     {
         if (Viewport.ResizeBehavior == ResizeBehavior.Auto)
@@ -110,29 +92,29 @@ public class Terminal<T> : ITerminal<T>
         }
     }
 
-    /// <inheritdoc cref="ITerminal{T}.Clear"/>
+    /// <inheritdoc cref="ITerminal.Clear"/>
     public void Clear()
     {
         Backend.Clear();
         Buffers[1 - _current].Reset();
     }
 
-    /// <inheritdoc cref="ITerminal{T}.HideCursor"/>
+    /// <inheritdoc cref="ITerminal.HideCursor"/>
     public void HideCursor()
     {
         Backend.HideCursor();
         IsCursorHidden = true;
     }
 
-    /// <inheritdoc cref="ITerminal{T}.ShowCursor"/>
+    /// <inheritdoc cref="ITerminal.ShowCursor"/>
     public void ShowCursor()
     {
         Backend.ShowCursor();
         IsCursorHidden = false;
     }
 
-    /// <inheritdoc cref="ITerminal{T}.Draw"/>
-    public CompletedFrame Draw(Action<Frame<T>> draw)
+    /// <inheritdoc cref="ITerminal.Draw"/>
+    public CompletedFrame Draw(Action<Frame> draw)
     {
         // Autoresize - otherwise we get glitches if shrinking or potential desync between widgets
         // and the terminal (if growing), which may OOB.

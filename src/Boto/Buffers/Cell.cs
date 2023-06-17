@@ -28,6 +28,11 @@ public readonly record struct Cell(string Symbol, Color Foreground, Color Backgr
     {
     }
 
+    /// <summary>
+    /// Create a new <see cref="Cell"/> with the <paramref name="style"/>.
+    /// </summary>
+    /// <param name="style">The other <see cref="Styles.Style"/></param>
+    /// <returns>A new <see cref="Cell"/> base on current and the <paramref name="style"/>.</returns>
     public Cell With(Style style)
     {
         var foreground = style.Foreground ?? Foreground;

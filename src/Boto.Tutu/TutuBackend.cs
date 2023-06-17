@@ -11,21 +11,63 @@ using static Tutu.Commands.Cursor;
 using static Tutu.Commands.Style;
 using Attribute = Tutu.Style.Types.Attribute;
 using CursorPosition = Boto.Terminals.CursorPosition;
+using ITerminal = Tutu.Terminal.ITerminal;
 using TerminalCommand = Tutu.Commands.Terminal;
 
 namespace Boto.Tutu;
 
+/// <summary>
+/// The tutu implement of <see cref="IBackend"/>.
+/// </summary>
 public class TutuBackend : IBackend
 {
     private readonly TextWriter _buffer;
     private readonly IQueueExecutor _queue;
+    private readonly ITerminal _terminal;
+    private readonly ICursor _cursor;
 
+    /// <summary>
+    /// Initialize a new instance of <see cref="TutuBackend"/>.
+    /// </summary>
+    public TutuBackend()
+        : this(Console.Out, SystemTerminal.Instance, SystemCursor.Instance)
+    {
+    }
+
+    /// <summary>
+    /// Initialize a new instance of <see cref="TutuBackend"/>.
+    /// </summary>
+    /// <param name="buffer">The buffer.</param>
     public TutuBackend(TextWriter buffer)
+        : this(buffer, SystemTerminal.Instance, SystemCursor.Instance)
+    {
+    }
+
+    /// <summary>
+    /// Initialize a new instance of <see cref="TutuBackend"/>.
+    /// </summary>
+    /// <param name="buffer">The buffer.</param>
+    /// <param name="terminal">The <see cref="ITerminal"/>.</param>
+    public TutuBackend(TextWriter buffer, ITerminal terminal)
+        : this(buffer, terminal, SystemCursor.Instance)
+    {
+    }
+
+    /// <summary>
+    /// Initialize a new instance of <see cref="TutuBackend"/>.
+    /// </summary>
+    /// <param name="buffer">The buffer.</param>
+    /// <param name="terminal">The <see cref="ITerminal"/>.</param>
+    /// <param name="cursor">The <see cref="ICursor"/>.</param>
+    public TutuBackend(TextWriter buffer, ITerminal terminal, ICursor cursor)
     {
         _buffer = buffer;
         _queue = _buffer.Enqueue();
+        _terminal = terminal;
+        _cursor = cursor;
     }
 
+    /// <inheritdoc cref="IBackend.Draw"/>
     public void Draw(IEnumerable<BufferDiff> content)
     {
         var fg = Color.Reset;
@@ -73,32 +115,38 @@ public class TutuBackend : IBackend
         );
     }
 
+    /// <inheritdoc cref="IBackend.HideCursor"/>
     public void HideCursor()
         => _buffer.Execute(Hide);
 
+    /// <inheritdoc cref="IBackend.ShowCursor"/>
     public void ShowCursor()
         => _buffer.Execute(Show);
 
+    /// <inheritdoc cref="IBackend.Clear"/>
     public void Clear()
         => _buffer.Execute(TerminalCommand.Clear(ClearType.All));
 
+    /// <inheritdoc cref="IBackend.Flush"/>
     public void Flush()
         => _queue.Flush();
 
+    /// <inheritdoc cref="IBackend.Size"/>
     public Rect Size
     {
         get
         {
-            var size = SystemTerminal.Size;
+            var size = _terminal.Size;
             return new Rect(0, 0, size.Width, size.Height);
         }
     }
 
+    /// <inheritdoc cref="IBackend.CursorPosition"/>
     public CursorPosition CursorPosition
     {
         get
         {
-            var position = SystemCursor.Instance.Position;
+            var position = _cursor.Position;
             return new CursorPosition(position.Row, position.Column);
         }
 

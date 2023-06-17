@@ -2,12 +2,20 @@
 
   <PropertyGroup>
     <TargetFramework>$(AppTargetFramework)</TargetFramework>
+    <GenerateDocumentationFile>true</GenerateDocumentationFile>
+    <IsPackable>true</IsPackable>
+    <Title>Boto.Tutu</Title>
+    <Description>Integration between Boto and Tutu libraries.</Description>
   </PropertyGroup>
 
   <ItemGroup>
+    <PackageReference Include="Microsoft.SourceLink.GitHub">
+      <PrivateAssets>all</PrivateAssets>
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+    </PackageReference>
     <PackageReference Include="Tutu" />
   </ItemGroup>
- 
+
   <ItemGroup>
     <ProjectReference Include="..\Boto\Boto.csproj" />
   </ItemGroup>

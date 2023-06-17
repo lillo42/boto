@@ -18,27 +18,27 @@ public interface IBackend
     /// Hide the cursor.
     /// </summary>
     void HideCursor();
-    
+
     /// <summary>
     /// Show the cursor.
     /// </summary>
     void ShowCursor();
-    
+
     /// <summary>
     /// Clear the terminal.
     /// </summary>
     void Clear();
-    
+
     /// <summary>
     /// Flush the terminal info.
     /// </summary>
     void Flush();
-    
+
     /// <summary>
     /// Current terminal size.
     /// </summary>
     Rect Size { get; }
-    
+
     /// <summary>
     /// Current cursor position.
     /// </summary>

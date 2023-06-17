@@ -4,7 +4,8 @@ using Boto.Styles;
 using Boto.Terminals;
 using Boto.Texts;
 using Boto.Tutu;
-using Boto.Widget;
+using Boto.Widgets;
+using Boto.Widgets.Extensions;
 using ListSample;
 using NodaTime;
 using Tutu.Events;
@@ -40,8 +41,8 @@ SystemTerminal.Instance.EnableRawMode();
 var stdout = Console.Out;
 stdout.Execute(EnterAlternateScreen, EnableMouseCapture);
 
-var backend = new TutuBackend(stdout);
-var terminal = new Terminal<TutuBackend>(backend);
+var terminal = new Terminal(new TutuBackend(stdout));
+
 var error = string.Empty;
 try
 {
@@ -57,8 +58,7 @@ stdout.Execute(LeaveAlternateScreen, DisableMouseCapture);
 
 Console.WriteLine(error);
 
-static void RunApp<T>(ITerminal<T> terminal, App app, Duration tickRate)
-    where T : class, IBackend
+static void RunApp(Boto.Terminals.ITerminal terminal, App app, Duration tickRate)
 {
     var lastTick = SystemClock.Instance.GetCurrentInstant();
     while (true)
@@ -102,12 +102,11 @@ static void RunApp<T>(ITerminal<T> terminal, App app, Duration tickRate)
     }
 }
 
-static void Ui<T>(Frame<T> frame, App app)
-    where T : class, IBackend
+static void Ui(Frame frame, App app)
 {
     // Create two chunks with equal horizontal screen space
     var chunks = new Layout()
-        .Direction(Direction.Horizontal)
+        .SetDirection(Direction.Horizontal)
         .AddConstraints(Constraints.Percentage(50), Constraints.Percentage(50))
         .Split(frame.Size);
 
@@ -129,11 +128,11 @@ static void Ui<T>(Frame<T> frame, App app)
     // We can now render the item list
     frame.Render(new List()
             .AddItems(items)
-            .Block(new Block()
-                .Title("List")
-                .Borders(Borders.All))
-            .HighlightStyle(new() { Background = Color.LightGreen, AddModifier = Modifier.Bold })
-            .HighlightSymbol(">> "), chunks[0], app.Items.State);
+            .SetBlock(new Block()
+                .SetTitle("List")
+                .SetBorders(Borders.All))
+            .SetHighlightStyle(new() { Background = Color.LightGreen, AddModifier = Modifier.Bold })
+            .SetHighlightSymbol(">> "), chunks[0], app.Items.State);
 
     // Let's do the same for the events.
     // The event list doesn't have any state and only displays the current state of the list
@@ -169,11 +168,10 @@ static void Ui<T>(Frame<T> frame, App app)
 
     frame.Render(new List()
         .AddItems(events)
-        .Block(new Block()
-            .Title("Event List")
-            .Borders(Borders.All))
-        .StartBottomLeft()
-        , chunks[1]);
+        .SetBlock(new Block()
+            .SetTitle("Event List")
+            .SetBorders(Borders.All))
+        .SetStartCorner(Corner.BottomLeft), chunks[1]);
 }
 
 

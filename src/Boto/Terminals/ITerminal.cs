@@ -6,21 +6,12 @@ namespace Boto.Terminals;
 /// <summary>
 /// Terminal abstraction.
 /// </summary>
-public interface ITerminal : ITerminal<IBackend>
-{
-}
-
-/// <summary>
-/// Terminal abstraction.
-/// </summary>
-/// <typeparam name="T">The <see cref="IBackend"/>.</typeparam>
-public interface ITerminal<T> : IDisposable 
-    where T : class, IBackend 
+public interface ITerminal : IDisposable
 {
     /// <summary>
     /// The backend.
     /// </summary>
-    T Backend { get; }
+    IBackend Backend { get; }
 
     /// <summary>
     /// Holds the results of the current and previous draw calls. The two are compared at the end
@@ -32,7 +23,7 @@ public interface ITerminal<T> : IDisposable
     /// The current buffer.
     /// </summary>
     Buffer CurrentBuffer { get; }
-    
+
     /// <summary>
     /// 
     /// </summary>
@@ -41,18 +32,18 @@ public interface ITerminal<T> : IDisposable
     /// <summary>
     /// Get a Frame object which provides a consistent view into the terminal state for rendering.
     /// </summary>
-    Frame<T> Frame { get; }
-    
+    Frame Frame { get; }
+
     /// <summary>
     /// Whether the cursor is currently hidden
     /// </summary>
     bool IsCursorHidden { get; }
-    
+
     /// <summary>
     /// Current size of the terminal.
     /// </summary>
     Rect Size { get; }
-    
+
     /// <summary>
     /// The viewport of the terminal.
     /// </summary>
@@ -71,7 +62,7 @@ public interface ITerminal<T> : IDisposable
     /// </summary>
     /// <param name="area">The new area.</param>
     void Resize(Rect area);
-    
+
     /// <summary>
     /// Queries the backend for size and resizes if it doesn't match the previous size.
     /// </summary>
@@ -86,7 +77,7 @@ public interface ITerminal<T> : IDisposable
     /// Show the cursor.
     /// </summary>
     void ShowCursor();
-    
+
     /// <summary>
     /// Hide the cursor.
     /// </summary>
@@ -98,5 +89,5 @@ public interface ITerminal<T> : IDisposable
     /// </summary>
     /// <param name="draw">The action.</param>
     /// <returns>The <see cref="CompletedFrame"/>.</returns>
-    CompletedFrame Draw(Action<Frame<T>> draw);
+    CompletedFrame Draw(Action<Frame> draw);
 }

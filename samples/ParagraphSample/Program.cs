@@ -4,7 +4,8 @@ using Boto.Styles;
 using Boto.Terminals;
 using Boto.Texts;
 using Boto.Tutu;
-using Boto.Widget;
+using Boto.Widgets;
+using Boto.Widgets.Extensions;
 using NodaTime;
 using Tutu.Events;
 using Tutu.Extensions;
@@ -20,8 +21,7 @@ var stdout = Console.Out;
 SystemTerminal.Instance.EnableRawMode();
 stdout.Execute(EnterAlternateScreen, EnableMouseCapture);
 
-var backend = new TutuBackend(stdout);
-var terminal = new Terminal<TutuBackend>(backend);
+var terminal = new Terminal(new TutuBackend(stdout));
 
 var error = string.Empty;
 try
@@ -37,8 +37,7 @@ SystemTerminal.Instance.DisableRawMode();
 stdout.Execute(LeaveAlternateScreen, DisableMouseCapture, Show);
 Console.WriteLine(error);
 
-static void RunApp<T>(ITerminal<T> terminal, App app, Duration tickRate)
-    where T : class, IBackend
+static void RunApp(Boto.Terminals.ITerminal terminal, App app, Duration tickRate)
 {
     var lastTick = SystemClock.Instance.GetCurrentInstant();
     while (true)
@@ -65,14 +64,13 @@ static void RunApp<T>(ITerminal<T> terminal, App app, Duration tickRate)
 }
 
 
-static void Ui<T>(Frame<T> frame, App app)
-    where T : class, IBackend
+static void Ui(Frame frame, App app)
 {
     frame.Render(new Block { Style = new() { Background = Color.White, Foreground = Color.Black } }, frame.Size);
 
     var chuncks = new Layout()
-        .Direction(Direction.Vertical)
-        .Margin(5)
+        .SetDirection(Direction.Vertical)
+        .SetMargin(5)
         .AddConstraints(
             Constraints.Percentage(25), 
             Constraints.Percentage(25), 
@@ -102,40 +100,40 @@ static void Ui<T>(Frame<T> frame, App app)
     };
 
     var createBlock = (string title) => new Block()
-        .Title(title, new() { AddModifier = Modifier.Bold })
-        .Borders(Borders.All)
-        .Style(new() { Background = Color.White, Foreground = Color.Black });
+        .SetTitle(title, new() { AddModifier = Modifier.Bold })
+        .SetBorders(Borders.All)
+        .SetStyle(new() { Background = Color.White, Foreground = Color.Black });
 
     frame.Render(
         new Paragraph(new(text.ToList()))
-            .Style(new() { Background = Color.White, Foreground = Color.Black })
-            .Block(createBlock("Left, no wrap"))
-            .Alignment(Alignment.Left),
+            .SetStyle(new() { Background = Color.White, Foreground = Color.Black })
+            .SetBlock(createBlock("Left, no wrap"))
+            .SetAlignment(Alignment.Left),
         chuncks[0]);
 
     frame.Render(
         new Paragraph()
-            .Text(text.ToList())
-            .Block(createBlock("Left, no wrap"))
-            .Style(new(){ Background = Color.White, Foreground = Color.Black })
-            .Alignment(Alignment.Left)
+            .SetText(text.ToList())
+            .SetBlock(createBlock("Left, no wrap"))
+            .SetStyle(new(){ Background = Color.White, Foreground = Color.Black })
+            .SetAlignment(Alignment.Left)
             .EnableTrim(), 
         chuncks[1]);
     
      frame.Render(
             new Paragraph()
-                .Text(text.ToList())
-                .Block(createBlock("Center, no wrap"))
-                .Style(new(){ Background = Color.White, Foreground = Color.Black })
-                .Alignment(Alignment.Center),
+                .SetText(text.ToList())
+                .SetBlock(createBlock("Center, no wrap"))
+                .SetStyle(new(){ Background = Color.White, Foreground = Color.Black })
+                .SetAlignment(Alignment.Center),
             chuncks[2]);
 
      frame.Render(
             new Paragraph()
-                .Text(text.ToList())
-                .Block(createBlock("Right, wrap"))
-                .Style(new(){ Background = Color.White, Foreground = Color.Black })
-                .Alignment(Alignment.Center)
+                .SetText(text.ToList())
+                .SetBlock(createBlock("Right, wrap"))
+                .SetStyle(new(){ Background = Color.White, Foreground = Color.Black })
+                .SetAlignment(Alignment.Center)
                 .EnableTrim(), 
             chuncks[3]);
 }
