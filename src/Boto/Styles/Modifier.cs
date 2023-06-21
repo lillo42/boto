@@ -22,50 +22,100 @@ public enum Modifier
     /// <summary>
     /// Bold modifier.
     /// </summary>
-    Bold = 0b0000_0000_0001,
+    Bold = 1,
 
     /// <summary>
     /// Dim modifier.
     /// </summary>
-    Dim = 0b0000_0000_0010,
+    Dim = 2,
 
     /// <summary>
     /// Italic modifier.
     /// </summary>
-    Italic = 0b0000_0000_0100,
+    Italic = 4,
 
     /// <summary>
     /// Underlined modifier.
     /// </summary>
-    Underlined = 0b0000_0000_1000,
+    Underlined = 8,
 
     /// <summary>
     /// Slow blink modifier.
     /// </summary>
-    SlowBlink = 0b0000_0001_0000,
-    
+    SlowBlink = 16,
+
     /// <summary>
     /// Rapid blink modifier.
     /// </summary>
-    RapidBlink = 0b0000_0010_0000,
-    
+    RapidBlink = 32,
+
     /// <summary>
     /// Reversed modifier.
     /// </summary>
-    Reversed = 0b0000_0100_0000,
-    
+    Reversed = 64,
+
     /// <summary>
     /// Hidden modifier.
     /// </summary>
-    Hidden = 0b0000_1000_0000,
-    
+    Hidden = 128,
+
     /// <summary>
     /// Crossed out modifier.
     /// </summary>
-    CrossedOut = 0b0001_0000_0000,
+    CrossedOut = 256,
+
+    /// <summary>
+    /// The double underlined modifier.
+    /// </summary>
+    DoubleUnderlined = 512,
+
+    /// <summary>
+    /// The curly underlined modifier.
+    /// </summary>
+    UnderCurled = 1024,
+
+    /// <summary>
+    /// The dotted underlined modifier.
+    /// </summary>
+    UnderDotted = 2048,
+
+    /// <summary>
+    /// The dashed underlined modifier.
+    /// </summary>
+    UnderDashed = 4096,
+
+    /// <summary>
+    /// The framed modifier.
+    /// </summary>
+    Frame = 8192,
+
+    /// <summary>
+    /// The encircled modifier.
+    /// </summary>
+    Encircle = 16384,
     
+    /// <summary>
+    /// The over lined modifier.
+    /// </summary>
+    OverLined = 32768,
+
     /// <summary>
     /// All modifiers.
     /// </summary>
-    All = Bold | Dim | Italic | Underlined | SlowBlink | RapidBlink | Reversed | Hidden | CrossedOut,
+    All = Bold 
+          | Dim 
+          | Italic
+          | Underlined
+          | SlowBlink
+          | RapidBlink
+          | Reversed
+          | Hidden
+          | CrossedOut
+          | DoubleUnderlined
+          | UnderCurled
+          | UnderDotted
+          | UnderDashed
+          | Frame
+          | Encircle
+          | OverLined
 }

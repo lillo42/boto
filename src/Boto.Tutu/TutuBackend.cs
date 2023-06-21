@@ -72,6 +72,7 @@ public class TutuBackend : IBackend
     {
         var fg = Color.Reset;
         var bg = Color.Reset;
+        var uc = Color.Reset;
         var modifier = Modifier.Empty;
         (int x, int y)? lastPos = null;
 
@@ -105,12 +106,20 @@ public class TutuBackend : IBackend
                 bg = diff.Cell.BackgroundColor;
             }
 
+            if (diff.Cell.UnderlineColor != uc)
+            {
+                var color = diff.Cell.UnderlineColor.MapToTutuColor();
+                _queue.Enqueue(SetUnderlineColor(color));
+                uc = diff.Cell.UnderlineColor;
+            }
+
             _queue.Enqueue(Print(diff.Cell.Symbol));
         }
 
         _queue.Enqueue(
             SetForegroundColor(Color.Reset.MapToTutuColor()),
             SetBackgroundColor(Color.Reset.MapToTutuColor()),
+            SetUnderlineColor(Color.Reset.MapToTutuColor()),
             SetAttribute(Attribute.Reset)
         );
     }
