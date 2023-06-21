@@ -5,13 +5,13 @@ namespace Boto.Buffers;
 /// <summary>
 /// Buffer cell
 /// </summary>
-public readonly record struct Cell(string Symbol, Color Foreground, Color BackgroundColor, Modifier Modifier)
+public readonly record struct Cell(string Symbol, Color Foreground, Color BackgroundColor, Color UnderlineColor, Modifier Modifier)
 {
     /// <summary>
     /// Initializes a new instance of the <see cref="Cell"/> struct.
     /// </summary>
     public Cell()
-        : this(" ", Color.Reset, Color.Reset, Modifier.Empty)
+        : this(" ", Color.Reset, Color.Reset, Color.Reset, Modifier.Empty)
     {
     }
 
@@ -24,6 +24,7 @@ public readonly record struct Cell(string Symbol, Color Foreground, Color Backgr
         : this(other.Symbol, 
             style.Foreground ?? other.Foreground, 
             style.Background ?? other.BackgroundColor, 
+            style.Underline ?? other.UnderlineColor,
             style.AddModifier | (other.Modifier & ~style.RemoveModifier))
     {
     }
@@ -48,5 +49,5 @@ public readonly record struct Cell(string Symbol, Color Foreground, Color Backgr
     /// <summary>
     /// The <see cref="Boto.Styles.Style"/>.
     /// </summary>
-    public Style Style => new(Foreground, BackgroundColor, Modifier, Modifier.Empty);
+    public Style Style => new(Foreground, BackgroundColor, UnderlineColor, Modifier, Modifier.Empty);
 }

@@ -243,7 +243,7 @@ public class BufferTest
             "└──────┘  ",
         });
 
-        var style = new Style { Foreground = Color.Yellow, Background = Color.Reset };
+        var style = new Style { Foreground = Color.Yellow, Background = Color.Reset, Underline = Color.Reset};
         buffer.SetStyle(buffer.Area, style);
         for (var y = buffer.Area.Top; y < buffer.Area.Bottom; y++)
         {
